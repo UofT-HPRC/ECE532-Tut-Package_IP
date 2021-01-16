@@ -14,7 +14,7 @@
 
 \title{ECE532S Digital Systems Design \\ \vspace{0.4cm}
        \Large Tutorial 6 - Creating and Packaging a Custom IP \\ \vspace{0.4cm}
-       \small Last Updated: July, 2019}
+       \small Last Updated: July, 2020}
 \author{ }
 \date{ }
 
@@ -75,7 +75,7 @@ The template core implements a simple AXI lite slave interface and here we will 
 
 \noindent
 In general all channels communicate using READY/VALID handshaking. Only when the
-sender asserts and valid signal and the receiver asserts a ready signal can data flow.
+sender asserts a valid signal and the receiver asserts a ready signal can data flow.
 
 
 \subsection{Write Operations}
@@ -175,7 +175,7 @@ breaklines,
 \end{minted}
 
 \noindent
-Modify it to add a sum port just as we did with the \textit{S00\_AXI} module. Next, we have to connect this signal in the top level wrapper to the instance of the \textit{S00\_AXI} module. CHange the instantiation of the inner module such that it appears as follows:
+Modify it to add a sum port just as we did with the \textit{S00\_AXI} module. Next, we have to connect this signal in the top level wrapper to the instance of the \textit{S00\_AXI} module. Change the instantiation of the inner module such that it appears as follows:
 
 \begin{minted}
 [
@@ -228,7 +228,7 @@ icon indicates that the step needs to be updated based on the changes. Open the 
     \label{fig:merge_changes}
 \end{figure}
 
-While we don't need to make any changes from the defaults selected by the wizard, it is still important to know what the purpose of each of these \textit{Packaging Steps} is. The \textit{Identification} step allow you to enter the name, version, and description for your core. Here you will generally update the version with every update. The \textit{Compatibility} step allows you to select what FPGAs the IP is compatible with; you'll only need to modify this if your Verilog includes modules that in themselves are not compatible with all Xilinx FPGAs (usually these are devices primitives). The \textit{File Groups} step lists all of the files included in the IP, and is where you would select to add any newly created verilog files to the IP. The \textit{Customization Parameters} lists all of the Verilog parameters within your top level module; you can change settings for them here. The \textit{Ports and Interfaces} should list all of the top level ports of your design; check to make sure the \textit{sum} port was added as an output. The \textit{Addressing and Memory} step lists all memory regions of your IP Core. The \textit{Customization GUI} step allows you to change what the GUI looks like for configuring your core. Finally, select the \textbf{Review and Package} step to finish the packaging process. Press \textbf{Re-Package IP} to package the IP with all of the changes we made. You can now close the IP project.
+While we don't need to make any changes from the defaults selected by the wizard, it is still important to know what the purpose of each of these \textit{Packaging Steps} is. The \textit{Identification} step allow you to enter the name, version, and description for your core. Here you will generally update the version with every update. The \textit{Compatibility} step allows you to select what FPGAs the IP is compatible with; you'll only need to modify this if your Verilog includes modules that in themselves are not compatible with all Xilinx FPGAs (usually these are device primitives). The \textit{File Groups} step lists all of the files included in the IP, and is where you would select to add any newly created verilog files to the IP. The \textit{Customization Parameters} lists all of the Verilog parameters within your top level module; you can change settings for them here. The \textit{Ports and Interfaces} should list all of the top level ports of your design; check to make sure the \textit{sum} port was added as an output. The \textit{Addressing and Memory} step lists all memory regions of your IP Core. The \textit{Customization GUI} step allows you to change what the GUI looks like for configuring your core. Finally, select the \textbf{Review and Package} step to finish the packaging process. Press \textbf{Re-Package IP} to package the IP with all of the changes we made. You can now close the IP project.
 
 
 
@@ -241,7 +241,7 @@ button to add a new IP repository to the project. Navigate to the \textit{ip\_re
 
 \begin{figure}[!h]
     \centering
-    \includegraphics[width=0.9\textwidth]{images/ip_repo_added.png}
+    \includegraphics[width=0.95\textwidth]{images/ip_repo_added.png}
     \caption{IPs listed after adding an IP repository}
     \label{fig:ip_repo_added}
 \end{figure}
@@ -255,7 +255,7 @@ Open the block diagram in your project. In order to simplify the project, go ahe
     \label{fig:block_w_core}
 \end{figure}
 
-We need to add a constraint file to our project to connect this new output value to the leds. Close the block diagram view. \textbf{Right click} the block diagram in the source window and select \textbf{Create HDL Wrapper} to regenerate the block diagram wrapper. Open the verilog wrapper and verify that the \textit{led} signal has been added as an output of the top level module. Note, we usually check the wrapper since the name of the signal in the wrapper doesn't always exactly match the name we gave to the signal in the block diagram view. Add a new constraint file to the project with the contents of Figure~\ref{fig:xdc_file}.
+We need to add a constraint file to our project to connect this new output value to the leds. Close the block diagram view. \textbf{Right click} the block diagram in the source window and select \textbf{Create HDL Wrapper} to regenerate the block diagram wrapper. Open the verilog wrapper and verify that the \textit{led} signal has been added as an output of the top level module. Note, we usually check the wrapper since the name of the signal in the wrapper doesn't always exactly match the name we gave to the signal in the block diagram view. Add the \textit{tutorial.xdc} constraint file found in this tutorial's zip folder with the contents of Figure~\ref{fig:xdc_file} to the project, making sure the signal names match those in the wrapper.
 
 \begin{figure}[!h]
 \centering
@@ -292,7 +292,7 @@ set_property IOSTANDARD LVCMOS33 [get_ports led[7]]
 \label{fig:xdc_file}
 \end{figure}
 
-Run \textbf{Synthesis}, \textbf{Implementation}, \textbf{Generate Bitstream}, and \textbf{Export Hardware}, and then launch \textbf{Vivado SDK}. Open the \textit{helloworld} application and modify the contents of \textit{helloworld.c} to the contents of Figure~\ref{fig:app_custom_ip}. This is a very simple application that just writes random values to the different registers of our core. The output value produced will be the sum of these values, which is 87, or 01010111. Before running our project, remember to open one of the board support package include files, such as \textit{xi\_printf.h}, and press \textbf{F5} to refresh them (as we did in tutorial~4). Open the \textit{Run Configurations} windows and ensure the \textbf{Program FPGA} check box is checked and press \textbf{Apply} (we unchecked it in tutorial~4). Now press \textbf{Run} to run the application on the FPGA. Verify the functionality is as expected on the leds.
+Run \textbf{Synthesis}, \textbf{Implementation}, \textbf{Generate Bitstream}, and \textbf{Export Hardware}, and then launch \textbf{Vivado SDK}. Open the \textit{helloworld} application and modify the contents of \textit{helloworld.c} to the contents of Figure~\ref{fig:app_custom_ip}. This is a very simple application that just writes random values to the different registers of our core. The output value produced will be the sum of these values, which is 87, or 01010111. Before running our project, remember to open one of the board support package include files, such as \textit{xil\_printf.h}, and press \textbf{F5} to refresh them (as we did in tutorial~4). Open the \textit{Run Configurations} windows and ensure the \textbf{Program FPGA} check box is checked and press \textbf{Apply} (we unchecked it in tutorial~4). Now press \textbf{Run} to run the application on the FPGA. Verify the functionality is as expected on the leds.
 
 \begin{figure}[!h]
 \centering
@@ -399,7 +399,7 @@ where <application> is the name of the \textit{hellowworld} application you crea
     \label{fig:assoc_elf}
 \end{figure}
 
-Now we simply need to create a testbench that can drive the inputs of our top level module, the block diagram wrapper. Create a new simulation source with the contents of Figure~\ref{fig:system_tb}. Make sure the instantiation of the HDL wrapper matches the one from your project. This testbench simply connects wires to each of the top level ports of the HDL wrapper, and create a valid reset and clock signal. The reset signals is asserted for the first 40ns and the clock pulses with a period of 4ns. Note, we hardwired the \textit{usb\_uart\_rxd} to zero as we don't need to test the uart signals and we cannot leave an input signals unconnected.
+Now we simply need to create a testbench that can drive the inputs of our top level module, the block diagram wrapper. Add the \textit{tutorial\_tb.v} file (the contents of which are shown in Figure~\ref{fig:system_tb}) found in this tutorial's zip folder as a simulation source to your project. Make sure the instantiation of the HDL wrapper matches the one from your project. This testbench simply connects wires to each of the top level ports of the HDL wrapper, and create a valid reset and clock signal. The reset signal is asserted for the first 40ns and the clock pulses with a period of 4ns. Note, we hardwired the \textit{usb\_uart\_rxd} to zero as we don't need to test the uart signals but we cannot leave input signals unconnected.
 
 \begin{figure}[!h]
 \centering
@@ -453,7 +453,7 @@ endmodule
 \label{fig:system_tb}
 \end{figure}
 
-Run the behavioural simulation, select \textbf{Run Simulation $\rightarrow$ Run Behavioural Simulation} from the \textit{Simulation} heading in the \textit{FLow Navigator}. Once the behavioural simulation window opens, it will have simulated the design for some default amount of time (likely 500ns). This amount of time is not nearly enough time for the MicroBlaze to do some useful work, so we will have to run the simulation for a longer time. In any case, we want to add some signals from our custom IP first before proceeding. In the \textit{Scope} tab, expand the hierarchy until you find the lowest level module of the \textit{myip} core. Now, in the \textit{Objects} tab, find the four slave registers and drag them to your waveform window. See Figure~\ref{fig:ip_signals} for reference. Also add the \textit{sum} signals from the \textit{Objects} tab to the waveform viewer.
+Run the behavioural simulation, select \textbf{Run Simulation $\rightarrow$ Run Behavioural Simulation} from the \textit{Simulation} heading in the \textit{Flow Navigator}. Once the behavioural simulation window opens, it will have simulated the design for some default amount of time (likely 500ns). This amount of time is not nearly enough time for the MicroBlaze to do some useful work, so we will have to run the simulation for a longer time. In any case, we want to add some signals from our custom IP first before proceeding. In the \textit{Scope} tab, expand the hierarchy until you find the lowest level module of the \textit{myip} core. Now, in the \textit{Objects} tab, find the four slave registers and drag them to your waveform window. See Figure~\ref{fig:ip_signals} for reference. Also add the \textit{sum} signals from the \textit{Objects} tab to the waveform viewer.
 
 \begin{figure}[!h]
     \centering
@@ -478,7 +478,7 @@ We notice that the write to our AXI registers are not made until around the 2.5m
 
 \section{Summary}
 \label{sec:conc}
-The Vivado flow for creating a custom IP allows us to wrap our own HDL cores such that they can included in Vivado projects through the block diagram editor. This flow even creates skeleton code with all of the functionality for any of the AXI protocols you'd like to include implemented for you. Note, the IP packaging flow demonstrated in this lab created a cor with AXI interfaces and corresponding generated skeleton code, though the IP packager can even be used with cores that have no AXI functionality. The IP core we created was instantiated in the block diagram from a previous tutorial, and we interfaced with it through a MicroBlaze program and system simulation.
+The Vivado flow for creating a custom IP allows us to wrap our own HDL cores such that they can included in Vivado projects through the block diagram editor. This flow even creates skeleton code with all of the functionality for any of the AXI protocols you'd like to include implemented for you. Note, the IP packaging flow demonstrated in this lab created a core with AXI interfaces and corresponding generated skeleton code, though the IP packager can even be used with cores that have no AXI functionality. The IP core we created was instantiated in the block diagram from a previous tutorial, and we interfaced with it through a MicroBlaze program and system simulation.
 
 
 
